@@ -1,8 +1,8 @@
 /*
-StringTemplate example
+ESPStringTemplate example
 
 Copyright (c) 2020 Dale Giancono. All rights reserved..
-This file is a sample application of the StringTemplat_P class
+This file is a sample application of the ESPStringTemplate class
 that uses HTML string elements stored in flash.
 
 This program is free software: you can redistribute it and/or modify
@@ -22,7 +22,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include "ESP8266WiFi.h"
 #include "ESPAsyncTCP.h"
 #include <ESPAsyncWebServer.h>
-#include "StringTemplate_P.h"
+#include "ESPStringTemplate.h"
 
 void buildPage(void);
 
@@ -69,7 +69,7 @@ void setup()
   {
     /* Create instance of StringTemplate, TokenStringPair, and a TokenStringPair array
     that will be used to build the site.*/
-    StringTemplate testTemplate(pageBuffer, sizeof(pageBuffer));
+    ESPStringTemplate testTemplate(pageBuffer, sizeof(pageBuffer));
     TokenStringPair pair;
     TokenStringPair pairArray[3];
 
