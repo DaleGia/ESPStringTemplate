@@ -32,6 +32,7 @@ webpage.add(F("<html><body>"));
 webpage.add(F("<h1>Hello World!</h1>"));
 webpage.add(F("</body></html>"));
 ```
+```c++
 - Using reusable HTML elements stored in flash with a simple token replacement.
 #include "ESPStringTemplate.h"
 static const char _PAGEHEADER[] PROGMEM = "<html><body>";
