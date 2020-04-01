@@ -1,0 +1,19 @@
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+TokenStringPair   KEYWORD1
+ESPStringTemplate	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+add	        KEYWORD2
+clear	      KEYWORD2
+arg	        KEYWORD2
+get	        KEYWORD2
+isOverflow	KEYWORD2
+setPair	    KEYWORD2
+setToken	  KEYWORD2
+setString	  KEYWORD2
+getToken	  KEYWORD2
+getString	  KEYWORD2
