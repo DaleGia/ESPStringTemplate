@@ -32,18 +32,35 @@ webpage.add(F("<html><body>"));
 webpage.add(F("<h1>Hello World!</h1>"));
 webpage.add(F("</body></html>"));
 ```
+- Using reusable HTML elements with a simple token replacement.
 ```c++
-- Using reusable HTML elements stored in flash with a simple token replacement.
 #include "ESPStringTemplate.h"
-static const char _PAGEHEADER[] PROGMEM = "<html><body>";
-static const char _CONTENT[]      PROGMEM = "%CONTENT%";
-static const char _PAGEFOOTER[] PROGMEM = "</body></html>";
+static const char _PAGEHEADER[] = "<html><body>";
+static const char _CONTENT[]    = "%CONTENT%";
+static const char _PAGEFOOTER[] = "</body></html>";
 
 static char[50] buffer;
 ESPStringTemplate webpage(buffer, sizeof(buffer));
 TokenStringPair pair;
-webpage.add(FPSTR(_PAGEHEADER));
+webpage.add(_PAGEHEADER);
 pair.setPair("%CONTENT%", "TEST CONTENT");
-webpage.add(FPSTR(_CONTENT), &pair);
-webpage.add(FPSTR(_PAGEFOOTER));
+webpage.add(_CONTENT, &pair);
+webpage.add(_PAGEFOOTER);
+```
+- Using reusable HTML elements with a multiple token replacement.
+```c++
+#include "ESPStringTemplate.h"
+static const char _PAGEHEADER[] = "<html><body>";
+static const char _CONTENTA[]   = "%CONTENTA% and %CONTENTB% and %CONTENTC%";
+static const char _PAGEFOOTER[] = "</body></html>";
+
+static char[100] buffer;
+ESPStringTemplate webpage(buffer, sizeof(buffer));
+TokenStringPair pair[3];
+webpage.add(_PAGEHEADER);
+pair[0].setPair("%CONTENTA%", "Replacing this token");
+pair[1].setPair("%CONTENTB%", "this token");
+pair[2].setPair("%CONTENTC%", "this last token as well...");
+webpage.add(_CONTENT, pair, 3);
+webpage.add(_PAGEFOOTER);
 ```
