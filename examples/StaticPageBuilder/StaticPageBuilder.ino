@@ -3,7 +3,10 @@ ESPStringTemplate example
 
 Copyright (c) 2020 Dale Giancono. All rights reserved..
 This file is a sample application of the ESPStringTemplate class
-that uses HTML string elements stored in flash.
+that uses HTML string elements stored in flash to create static 
+web pages. The title of the web page can be edited by using the 
+lineEdit element and relevent submit buttons. It uses the 
+ESPAsyncWebServer to serve these statically created web pages.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -76,7 +79,7 @@ void setup()
     /* Set tokenStringPair to replace %TITLE% token with "StringTemplate Example"*/
     /* This is set here as it is meant to be the default value */
 
-    pair.setPair("%TITLE%", "StringTemplate Example");
+    pair.setPair("%TITLE%", "ESPStringTemplate Example");
 
     /* Check with a parameter named "event" was included in the GET request. */ 
     if(request->hasParam("event"))
