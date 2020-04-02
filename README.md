@@ -5,7 +5,7 @@ ESPStringTemplate is a lightweight library created to make static web page gener
 
 ## Features
 - Simple interface to add string/HTML elements to statically allocated buffer with overflow detection (no dynamic memory allocation).
-- Abiility to replace multiple string tokens in HTML elements that are added to buffer.
+- Ability to replace multiple string tokens in HTML elements that are added to buffer.
 - Ability to utilise flash memory for string/HTML elements used to build web pages.
 - Only requires <WString.h> (for the __FlashStringHelper class). 
 
