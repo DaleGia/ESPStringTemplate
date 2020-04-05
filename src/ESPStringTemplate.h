@@ -57,12 +57,14 @@ class ESPStringTemplate
   public:
     ESPStringTemplate(char* templateBuffer, uint32_t templateBufferSize);
   
-    bool add(const __FlashStringHelper*  stringToAdd);
+    bool add_P(PGM_P  stringToAdd);
     bool add(const char* stringToAdd);
-    bool add(const __FlashStringHelper* stringToAdd, TokenStringPair* pair);
-    bool add(const char* stringToAdd, TokenStringPair* pair);
-    bool add(const __FlashStringHelper* stringToAdd, TokenStringPair pairList[], size_t numberOfPairs);
+    bool add(const char* stringToAdd, const char* token, const char* string);
+    bool add_P(PGM_P stringToAdd, const char* token, const char* string);
+
     bool add(const char* stringToAdd, TokenStringPair pairList[], size_t numberOfPairs);
+    bool add_P(PGM_P stringToAdd, TokenStringPair pairList[], size_t numberOfPairs);
+
     void clear(void);
     const char* get(void);
     bool isOverflow(void);
