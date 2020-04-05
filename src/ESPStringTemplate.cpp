@@ -21,7 +21,6 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 #include "ESPStringTemplate.h"
-
 TokenStringPair::TokenStringPair()
 {
   return;
@@ -73,13 +72,13 @@ ESPStringTemplate::ESPStringTemplate(char* templateBuffer, uint32_t templateBuff
   return;
 }
 
-bool ESPStringTemplate::add(const __FlashStringHelper* stringToAdd)
+bool ESPStringTemplate::add_P(PGM_P stringToAdd)
 {
   if(!this->overflowFlag)
   {
-    if(strlen_P((PGM_P)stringToAdd) < bufferLeft())
+    if(strlen_P(stringToAdd) < bufferLeft())
     {
-      strcat_P(this->buffer, (PGM_P)stringToAdd);
+      strcat_P(this->buffer, stringToAdd);
     }
     else
     {
@@ -108,15 +107,16 @@ bool ESPStringTemplate::add(const char* stringToAdd)
   return this->overflowFlag;
 }
 
-bool ESPStringTemplate::add(const __FlashStringHelper* stringToAdd, TokenStringPair* pair)
+bool ESPStringTemplate::add_P(PGM_P stringToAdd, const char* token, const char* string)
 {
+
   char* destPointer;   
   if(!this->overflowFlag)
   {
-    if(strlen_P((PGM_P)stringToAdd) < bufferLeft())
+    if(strlen_P(stringToAdd) < bufferLeft())
     {
-      destPointer = strcat_P(this->buffer, (PGM_P)stringToAdd);
-      replace(destPointer, pair->getToken(), pair->getString());
+      destPointer = strcat_P(this->buffer, stringToAdd);
+      replace(destPointer, token, string);
     }
     else
     {
@@ -124,17 +124,19 @@ bool ESPStringTemplate::add(const __FlashStringHelper* stringToAdd, TokenStringP
     }
   }  
   return this->overflowFlag;
-}  
+}
 
-bool ESPStringTemplate::add(const char* stringToAdd, TokenStringPair* pair)
+
+bool ESPStringTemplate::add(const char* stringToAdd, const char* token, const char* string)
 {
+
   char* destPointer;   
   if(!this->overflowFlag)
   {
-    if(strlen_P((PGM_P)stringToAdd) < bufferLeft())
+    if(strlen(stringToAdd) < bufferLeft())
     {
-      destPointer = strcat(this->buffer, (PGM_P)stringToAdd);
-      replace(destPointer, pair->getToken(), pair->getString());
+      destPointer = strcat(this->buffer, stringToAdd);
+      replace(destPointer, token, string);
     }
     else
     {
@@ -142,18 +144,18 @@ bool ESPStringTemplate::add(const char* stringToAdd, TokenStringPair* pair)
     }
   }  
   return this->overflowFlag;
-}  
+}
 
-bool ESPStringTemplate::add(const __FlashStringHelper* stringToAdd, TokenStringPair pairList[], size_t numberOfPairs)
+bool ESPStringTemplate::add_P(PGM_P stringToAdd, TokenStringPair pairList[], size_t numberOfPairs)
 {
   char* destPointer;
   int ii;   
   if(!this->overflowFlag)
   {
-    if(strlen_P((PGM_P)stringToAdd) < bufferLeft())
+    if(strlen_P(stringToAdd) < bufferLeft())
     {
       destPointer = 
-        strcat_P(this->buffer, (PGM_P)stringToAdd);
+        strcat_P(this->buffer, stringToAdd);
       for(ii = 0; ii < numberOfPairs; ii++)
       {
         replace(
@@ -260,7 +262,6 @@ bool ESPStringTemplate::replace(char* stringToEdit, const char* oldSubstring, co
     while(NULL != foundPointer)
     {
       newBufferLeft = bufferLeft()-(newSize-oldSize);
-
       if(newBufferLeft > 0)
       {
         moveSize = 
