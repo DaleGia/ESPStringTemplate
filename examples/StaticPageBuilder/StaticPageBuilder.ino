@@ -29,8 +29,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #include <ESPAsyncWebServer.h>
 #include "ESPStringTemplate.h"
 
-void buildPage(void);
-
 /* Store different HTML elements in flash. Descriptions of the various 
 tokens are included above each element that has tokens.*/
 static const char _PAGEHEADER[] PROGMEM = "<!DOCTYPE html><html><body>";
