@@ -3,9 +3,10 @@ ESPStringTemplate.cpp
 
 Copyright (c) 2020 Dale Giancono. All rights reserved..
 This file defines the ESPStringTemplate class. It can be used
-to build the conent of statically allocated strings and have "tokens" 
-within those strings replaced with substrings. It is particularly 
-useful as a static web page generator.
+to build the content of strings and have "tokens" 
+within those strings replaced with substrings. The content is stored using 
+SPIFFS. It is particularly useful as a static web page generator that 
+uses low amounts of RAM and FLASH due to it's SPIFFs ussage.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -21,6 +22,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 #include "ESPStringTemplate.h"
+
 TokenStringPair::TokenStringPair()
 {
   return;
@@ -62,228 +64,118 @@ const char* TokenStringPair::getString(void)
   return this->string;
 }
 
-ESPStringTemplate::ESPStringTemplate(char* templateBuffer, uint32_t templateBufferSize)
+ESPStringTemplate::ESPStringTemplate(const char* filename)
 {
-  this->buffer = templateBuffer;
-  this->bufferEndPointer = templateBuffer+templateBufferSize-1;
-  this->bufferLength = templateBufferSize;
-  this->overflowFlag = false;
-  clear();
+  this->filename = filename;
+  this->content = SPIFFS.open(this->filename, "w+");
+  this->content.close();
   return;
 }
 
-bool ESPStringTemplate::add_P(PGM_P stringToAdd)
+void ESPStringTemplate::add_P(PGM_P stringToAdd)
 {
-  if(!this->overflowFlag)
+  this->content = SPIFFS.open(this->filename, "a");
+  for(int ii = 0; ii < strlen_P(stringToAdd); ii++)
   {
-    if(strlen_P(stringToAdd) < bufferLeft())
-    {
-      strcat_P(this->buffer, stringToAdd);
-    }
-    else
-    {
-      handleOverflow();
-    }
+    this->content.write((char)pgm_read_byte(stringToAdd+ii));
+  }
+  this->content.close();
+}
+
+
+void ESPStringTemplate::add(const char* stringToAdd)
+{
+  this->content = SPIFFS.open(this->filename, "a");
+  for(int ii = 0; ii < strlen(stringToAdd); ii++)
+  {
+    this->content.write((char)*(stringToAdd+ii));
+  }
+  this->content.close();
+}
+
+void ESPStringTemplate::add_P(PGM_P stringToAdd, const char* token, const char* string)
+{
+  String editString;
+  for(int ii = 0; ii < strlen_P(stringToAdd); ii++)
+  {
+    editString += (char)pgm_read_byte(stringToAdd+ii);
+  }
+
+  editString.replace(token, string);
+  this->content = SPIFFS.open(this->filename, "a");
+  const char* stringPointer = editString.c_str();
+  for(int ii = 0; ii < editString.length(); ii++)
+  {
+    this->content.write((char)*(stringPointer+ii));
+  }
+  this->content.close();
+}
+
+
+void ESPStringTemplate::add(const char* stringToAdd, const char* token, const char* string)
+{
+  String editString = stringToAdd;
+  editString.replace(token, string);
+  this->content = SPIFFS.open(this->filename, "a");
+  const char* stringPointer = editString.c_str();
+  for(int ii = 0; ii < editString.length(); ii++)
+  {
+    this->content.write((char)*(stringPointer+ii));
+  }
+  this->content.close();
+}
+
+void ESPStringTemplate::add_P(PGM_P stringToAdd, TokenStringPair pairList[], size_t numberOfPairs)
+{
+  String editString;
+  for(int ii = 0; ii < strlen_P(stringToAdd); ii++)
+  {
+    editString += (char)pgm_read_byte(stringToAdd+ii);
+  }
+
+  for(int ii = 0; ii < numberOfPairs; ii++)
+  {
+    editString.replace(pairList[ii].getToken(), pairList[ii].getString());
   }
   
-  return this->overflowFlag;
-}
-
-
-bool ESPStringTemplate::add(const char* stringToAdd)
-{
-  if(!this->overflowFlag)
+  this->content = SPIFFS.open(this->filename, "a");
+  const char* stringPointer = editString.c_str();
+  for(int ii = 0; ii < editString.length(); ii++)
   {
-    if(strlen(stringToAdd) < bufferLeft())
-    {
-      strcat(this->buffer, stringToAdd);
-    }
-    else
-    {
-      handleOverflow();
-    }
+    this->content.write((char)*(stringPointer+ii));
   }
-  
-  return this->overflowFlag;
+  this->content.close();
 }
 
-bool ESPStringTemplate::add_P(PGM_P stringToAdd, const char* token, const char* string)
+void ESPStringTemplate::add(const char* stringToAdd, TokenStringPair pairList[], size_t numberOfPairs)
 {
-
-  char* destPointer;   
-  if(!this->overflowFlag)
+  String editString = stringToAdd;
+  for(int ii = 0; ii < numberOfPairs; ii++)
   {
-    if(strlen_P(stringToAdd) < bufferLeft())
-    {
-      destPointer = strcat_P(this->buffer, stringToAdd);
-      replace(destPointer, token, string);
-    }
-    else
-    {
-      handleOverflow();
-    }
-  }  
-  return this->overflowFlag;
-}
+    editString.replace(pairList[ii].getToken(), pairList[ii].getString());
+  }
 
-
-bool ESPStringTemplate::add(const char* stringToAdd, const char* token, const char* string)
-{
-
-  char* destPointer;   
-  if(!this->overflowFlag)
+  this->content = SPIFFS.open(this->filename, "a");
+  const char* stringPointer = editString.c_str();
+  for(int ii = 0; ii < editString.length(); ii++)
   {
-    if(strlen(stringToAdd) < bufferLeft())
-    {
-      destPointer = strcat(this->buffer, stringToAdd);
-      replace(destPointer, token, string);
-    }
-    else
-    {
-      handleOverflow();
-    }
-  }  
-  return this->overflowFlag;
-}
-
-bool ESPStringTemplate::add_P(PGM_P stringToAdd, TokenStringPair pairList[], size_t numberOfPairs)
-{
-  char* destPointer;
-  int ii;   
-  if(!this->overflowFlag)
-  {
-    if(strlen_P(stringToAdd) < bufferLeft())
-    {
-      destPointer = 
-        strcat_P(this->buffer, stringToAdd);
-      for(ii = 0; ii < numberOfPairs; ii++)
-      {
-        replace(
-          destPointer, 
-          pairList[ii].getToken(), 
-          pairList[ii].getString()); 
-        if(this->overflowFlag)
-        {
-          break;
-        }
-      }
-    }
-    else
-    {
-      handleOverflow();
-    }
-  }     
-  return this->overflowFlag;
-}
-
-
-bool ESPStringTemplate::add(const char* stringToAdd, TokenStringPair pairList[], size_t numberOfPairs)
-{
-  char* destPointer;
-  int ii;   
-  if(!this->overflowFlag)
-  {
-    if(strlen(stringToAdd) < bufferLeft())
-    {
-      destPointer = 
-        strcat(this->buffer, stringToAdd);
-      for(ii = 0; ii < numberOfPairs; ii++)
-      {
-        replace(
-          destPointer, 
-          pairList[ii].getToken(), 
-          pairList[ii].getString()); 
-        if(this->overflowFlag)
-        {
-          break;
-        }
-      }
-    }
-    else
-    {
-      handleOverflow();
-    }
-  }     
-  return this->overflowFlag;
+    this->content.write((char)*(stringPointer+ii));
+  }
+  this->content.close();
 }
 
 void ESPStringTemplate::clear(void)
 {
-  memset(buffer, 0, this->bufferLength);
-  this->overflowFlag = false;
+  String filename;
+  filename = this->content.name();
+  SPIFFS.remove(filename.c_str());
+  this->content = SPIFFS.open(this->filename, "w");
+  this->content.close();
   return;
 }
 
-const char* ESPStringTemplate::get(void)
+const char* ESPStringTemplate::getFilename(void)
 {
-  return buffer;
-}
-
-bool ESPStringTemplate::isOverflow(void)
-{
-  return this->overflowFlag;
-}
-
-size_t ESPStringTemplate::bufferLeft(void)
-{
-  size_t currentBufferSize;
-  size_t bufferLeft;
-  
-  currentBufferSize = strlen(this->buffer);
-  bufferLeft = this->bufferLength - currentBufferSize;
-  return bufferLeft;
-}
-
-void ESPStringTemplate::handleOverflow(void)
-{
-  memset(this->buffer, 0, this->bufferLength);
-  add(PSTR("overflow detected"));
-  this->overflowFlag = true;
-
-  return;
-}  
-
-bool ESPStringTemplate::replace(char* stringToEdit, const char* oldSubstring, const char* newSubstring)
-{
-  size_t oldSize;
-  size_t newSize;
-  size_t newBufferLeft;
-  int moveSize;
-  char* foundPointer;
-  if(!this->overflowFlag)
-  {
-    /* Get the key and string size so we can correctly calculate
-     *  the correct pointer posisitons to write to the string array.
-     */
-    oldSize = strlen(oldSubstring);
-    newSize = strlen(newSubstring);
-    
-    foundPointer = strstr(stringToEdit, oldSubstring);
-    while(NULL != foundPointer)
-    {
-      newBufferLeft = bufferLeft()-(newSize-oldSize);
-      if(newBufferLeft > 0)
-      {
-        moveSize = 
-          (this->bufferEndPointer-foundPointer) - newSize;
-       /* Move data found after the found substring so it will be in
-        *  the correct position for the size of the replacement
-        *  substring.
-        */
-        memmove(foundPointer+newSize, foundPointer+oldSize, moveSize);
-       /* Copies the string in to the space that was just created
-        *  by the above operation
-        */
-        memcpy(foundPointer, newSubstring, newSize);
-        foundPointer = strstr(stringToEdit, oldSubstring);
-      }
-      else
-      {
-        handleOverflow();
-        break;
-      }
-    }
-  }
-  return this->overflowFlag;
+  return this->filename;
 }
   
