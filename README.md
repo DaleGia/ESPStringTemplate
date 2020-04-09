@@ -71,7 +71,7 @@ server.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
   ESPStringTemplate webpage("webpage.html");
   webpage.add("Hi!);
   /* Send the webpage from SPIFFS where it is stored. */
-  request->send(SPIFFS, testTemplate.getFilename(), "text/html");
+  request->send(SPIFFS, webpage.getFilename(), "text/html");
 }
 server.begin();
 ```
