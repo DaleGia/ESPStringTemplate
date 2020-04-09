@@ -45,7 +45,7 @@ webpage.add_P(_PAGEFOOTER);
 - Using reusable HTML elements with a multiple token replacement.
 ```c++
 static const char _PAGEHEADER[] PROGMEM = "<html><body>";
-static const char _CONTENTA[]   PROGMEM = "%CONTENTA% and %CONTENTB% and %CONTENTC%";
+static const char _CONTENT[]   PROGMEM = "%CONTENTA% and %CONTENTB% and %CONTENTC%";
 static const char _PAGEFOOTER[] PROGMEM = "</body></html>";
 
 SPIFFS.begin();
