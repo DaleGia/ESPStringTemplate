@@ -38,9 +38,8 @@ void setup()
     IPAddress(192,168,4,1),
     IPAddress(192,168,4,1),
     IPAddress(255,255,255,0));
-  WiFi.softAP("StringTemplate HTMLBuilder Test");
-  WiFi.mode(WIFI_AP_STA);
-  WiFi.begin();
+  WiFi.softAP("ESPStringTemplate example");
+
   /* Define the handler for when the server receives a GET request for the root uri. */
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
   {
