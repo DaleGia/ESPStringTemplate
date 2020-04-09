@@ -1,6 +1,5 @@
 /*
 ESPStringTemplate example
-
 Copyright (c) 2020 Dale Giancono. All rights reserved..
 This file is a sample application of the ESPStringTemplate class
 that uses HTML string elements stored flash to build web page stored
@@ -9,17 +8,14 @@ a line edit, and a submit button. The title of the page can be
 changed by submiting a string with the line edit. Each time the 
 submit button is pressed the webpage is statically created using 
 the submited line edit string as the title.
-
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
-
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
-
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
@@ -58,15 +54,13 @@ void setup()
     IPAddress(192,168,4,1),
     IPAddress(192,168,4,1),
     IPAddress(255,255,255,0));
-  WiFi.softAP("StringTemplate HTMLBuilder Test");
-  WiFi.mode(WIFI_AP_STA);
-  WiFi.begin();
+  WiFi.softAP("ESPStringTemplate example");
   /* Define the handler for when the server receives a GET request for the root uri. */
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
   {
     /* Create instance of StringTemplate, TokenStringPair, and a TokenStringPair array
     that will be used to build the site.*/
-    ESPStringTemplate testTemplate(htmlTemplateFileName);
+    ESPStringTemplate testTemplate("ESPStringTemplate.html");
     TokenStringPair pair;
     TokenStringPair pairArray[2];
 
