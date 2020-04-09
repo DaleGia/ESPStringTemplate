@@ -8,10 +8,9 @@ ESPStringTemplate	KEYWORD1
 # Methods and Functions (KEYWORD2)
 #######################################
 add	        KEYWORD2
+add_P	      KEYWORD2
 clear	      KEYWORD2
-arg	        KEYWORD2
-get	        KEYWORD2
-isOverflow	KEYWORD2
+getFilename	KEYWORD2
 setPair	    KEYWORD2
 setToken	  KEYWORD2
 setString	  KEYWORD2
