@@ -27,7 +27,7 @@ SPIFFS.begin();
 /* Filename must be less than 32 characters long */
 ESPStringTemplate webpage("webpage.html");
 webpage.add_P(PSTR("This is an example of the ESPStringTemplate Library.<br><br>");
-webpage.add_P(PSTR("This string is stored in flash using PROGMEM, and this appended to a file strored in flash using SPIFFS."));
+webpage.add_P(PSTR("This string is stored in flash using PROGMEM, and this appended to a file stored in flash using SPIFFS."));
 ```
 - Using reusable HTML elements with a simple token replacement.
 ```c++
@@ -69,7 +69,7 @@ server.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
 {
   /* Filename must be less than 32 characters long */
   ESPStringTemplate webpage("webpage.html");
-  webpage.add("Hi!);
+  webpage.add("Hi!");
   /* Send the webpage from SPIFFS where it is stored. */
   request->send(SPIFFS, webpage.getFilename(), "text/html");
 }
