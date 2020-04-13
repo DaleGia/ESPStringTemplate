@@ -22,6 +22,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 #include "ESPStringTemplate.h"
+#include <FS.h>
 
 TokenStringPair::TokenStringPair()
 {
@@ -66,69 +67,158 @@ const char* TokenStringPair::getString(void)
 
 ESPStringTemplate::ESPStringTemplate(const char* filename)
 {
+  File file;
+  
   this->filename = filename;
-  this->content = SPIFFS.open(this->filename, "w+");
-  this->content.close();
+  file = SPIFFS.open(this->filename, "w+");
+  file.close();
   return;
 }
 
-void ESPStringTemplate::add_P(PGM_P stringToAdd)
+bool ESPStringTemplate::add_P(PGM_P stringToAdd)
 {
-  this->content = SPIFFS.open(this->filename, "a");
-  for(int ii = 0; ii < strlen_P(stringToAdd); ii++)
-  {
-    this->content.write((char)pgm_read_byte(stringToAdd+ii));
+  File file;
+  size_t bytesToWrite;
+  size_t bytesWritten;
+  bool success;
+  
+  success = false;
+  bytesWritten = 0;
+  bytesToWrite = strlen_P(stringToAdd);
+  file = SPIFFS.open(this->filename, "a");
+  
+  if(file)
+  {  
+    for(int ii = 0; ii < bytesToWrite; ii++)
+    {
+      bytesWritten += file.write((char)pgm_read_byte(stringToAdd+ii));
+    }
+    file.close();
+
+    if(bytesWritten == bytesToWrite)
+    {
+      success = true;
+    }
   }
-  this->content.close();
+
+  return success;
 }
 
 
-void ESPStringTemplate::add(const char* stringToAdd)
+bool ESPStringTemplate::add(const char* stringToAdd)
 {
-  this->content = SPIFFS.open(this->filename, "a");
-  for(int ii = 0; ii < strlen(stringToAdd); ii++)
-  {
-    this->content.write((char)*(stringToAdd+ii));
+  File file;
+  size_t bytesToWrite;
+  size_t bytesWritten;
+  bool success;
+  
+  success = false;
+  bytesWritten = 0;
+  bytesToWrite = strlen(stringToAdd);
+  file = SPIFFS.open(this->filename, "a");
+
+  if(file)
+  {  
+    for(int ii = 0; ii < bytesToWrite; ii++)
+    {
+      bytesWritten += file.write((char)*(stringToAdd+ii));
+    }
+    file.close();
+    
+    if(bytesWritten == bytesToWrite)
+    {
+      success = true;
+    }
   }
-  this->content.close();
+  
+  return success;
 }
 
-void ESPStringTemplate::add_P(PGM_P stringToAdd, const char* token, const char* string)
+bool ESPStringTemplate::add_P(PGM_P stringToAdd, const char* token, const char* string)
 {
+  File file;
+  size_t bytesToWrite;
+  size_t bytesWritten;
+  bool success;
   String editString;
-  for(int ii = 0; ii < strlen_P(stringToAdd); ii++)
+
+  success = false;
+  bytesWritten = 0;
+  bytesToWrite = strlen_P(stringToAdd);
+  
+  for(int ii = 0; ii < bytesToWrite; ii++)
   {
     editString += (char)pgm_read_byte(stringToAdd+ii);
   }
 
   editString.replace(token, string);
-  this->content = SPIFFS.open(this->filename, "a");
-  const char* stringPointer = editString.c_str();
-  for(int ii = 0; ii < editString.length(); ii++)
-  {
-    this->content.write((char)*(stringPointer+ii));
+  bytesToWrite = editString.length();
+  file = SPIFFS.open(this->filename, "a");
+  if(file)
+  {  
+    const char* stringPointer = editString.c_str();
+    for(int ii = 0; ii < editString.length(); ii++)
+    {
+      bytesWritten += file.write((char)*(stringPointer+ii));
+    }
+    file.close();
+
+    if(bytesWritten == bytesToWrite)
+    {
+      success = true;
+    }
   }
-  this->content.close();
+
+  return success;
 }
 
 
-void ESPStringTemplate::add(const char* stringToAdd, const char* token, const char* string)
+bool ESPStringTemplate::add(const char* stringToAdd, const char* token, const char* string)
 {
-  String editString = stringToAdd;
-  editString.replace(token, string);
-  this->content = SPIFFS.open(this->filename, "a");
-  const char* stringPointer = editString.c_str();
-  for(int ii = 0; ii < editString.length(); ii++)
-  {
-    this->content.write((char)*(stringPointer+ii));
-  }
-  this->content.close();
-}
-
-void ESPStringTemplate::add_P(PGM_P stringToAdd, TokenStringPair pairList[], size_t numberOfPairs)
-{
+  File file;
   String editString;
-  for(int ii = 0; ii < strlen_P(stringToAdd); ii++)
+  size_t bytesToWrite;
+  size_t bytesWritten;
+  bool success;
+  
+  success = false;
+  bytesWritten = 0;
+  bytesToWrite = strlen(stringToAdd);
+  editString = stringToAdd;
+  
+  editString.replace(token, string);
+  const char* stringPointer = editString.c_str();
+  file = SPIFFS.open(this->filename, "a");
+    
+  if(file)
+  {
+    for(int ii = 0; ii < editString.length(); ii++)
+    {
+      bytesWritten += file.write((char)*(stringPointer+ii));
+    }
+    file.close();
+
+    if(bytesWritten == bytesToWrite)
+    {
+      success = true;
+    }
+  }
+}
+
+bool ESPStringTemplate::add_P(PGM_P stringToAdd, TokenStringPair pairList[], size_t numberOfPairs)
+{
+  File file;
+  String editString;
+  size_t bytesToWrite;
+  size_t bytesWritten;
+  bool success;
+  
+  success = false;
+  bytesWritten = 0;
+  bytesToWrite = strlen_P(stringToAdd);
+  editString = stringToAdd;
+  
+  for(int ii = 0; ii < bytesToWrite; ii++)
   {
     editString += (char)pgm_read_byte(stringToAdd+ii);
   }
@@ -138,39 +228,50 @@ void ESPStringTemplate::add_P(PGM_P stringToAdd, TokenStringPair pairList[], siz
     editString.replace(pairList[ii].getToken(), pairList[ii].getString());
   }
   
-  this->content = SPIFFS.open(this->filename, "a");
+  file = SPIFFS.open(this->filename, "a");
   const char* stringPointer = editString.c_str();
   for(int ii = 0; ii < editString.length(); ii++)
   {
-    this->content.write((char)*(stringPointer+ii));
+    bytesWritten += file.write((char)*(stringPointer+ii));
   }
-  this->content.close();
+  file.close();
+  if(file)
+  {
+    if(bytesWritten == bytesToWrite)
+    {
+      success = true;
+    }
+  }
+  
+  return success;
 }
 
-void ESPStringTemplate::add(const char* stringToAdd, TokenStringPair pairList[], size_t numberOfPairs)
+bool ESPStringTemplate::add(const char* stringToAdd, TokenStringPair pairList[], size_t numberOfPairs)
 {
+  File file;
   String editString = stringToAdd;
   for(int ii = 0; ii < numberOfPairs; ii++)
   {
     editString.replace(pairList[ii].getToken(), pairList[ii].getString());
   }
 
-  this->content = SPIFFS.open(this->filename, "a");
+  file = SPIFFS.open(this->filename, "a");
   const char* stringPointer = editString.c_str();
   for(int ii = 0; ii < editString.length(); ii++)
   {
-    this->content.write((char)*(stringPointer+ii));
+    file.write((char)*(stringPointer+ii));
   }
-  this->content.close();
+  file.close();
 }
 
 void ESPStringTemplate::clear(void)
 {
+  File file;
   String filename;
-  filename = this->content.name();
+  filename = file.name();
   SPIFFS.remove(filename.c_str());
-  this->content = SPIFFS.open(this->filename, "w");
-  this->content.close();
+  file = SPIFFS.open(this->filename, "w");
+  file.close();
   return;
 }
 
