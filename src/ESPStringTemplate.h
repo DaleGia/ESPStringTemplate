@@ -25,7 +25,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #define ESPSTRINGTEMPLATE_H_
 
 #include <pgmspace.h>
-#include <FS.h>
 /* 
   The TokenStringPair class can be used with the StringTemplate class
   to provide a simple way to replace "tokens" within a string with other
@@ -57,19 +56,18 @@ class ESPStringTemplate
   public:
     ESPStringTemplate(const char* filename);
   
-    void add_P(PGM_P  stringToAdd);
-    void add(const char* stringToAdd);
-    void add(const char* stringToAdd, const char* token, const char* string);
-    void add_P(PGM_P stringToAdd, const char* token, const char* string);
+    bool add_P(PGM_P  stringToAdd);
+    bool add(const char* stringToAdd);
+    bool add(const char* stringToAdd, const char* token, const char* string);
+    bool add_P(PGM_P stringToAdd, const char* token, const char* string);
 
-    void add(const char* stringToAdd, TokenStringPair pairList[], size_t numberOfPairs);
-    void add_P(PGM_P stringToAdd, TokenStringPair pairList[], size_t numberOfPairs);
+    bool add(const char* stringToAdd, TokenStringPair pairList[], size_t numberOfPairs);
+    bool add_P(PGM_P stringToAdd, TokenStringPair pairList[], size_t numberOfPairs);
 
     void clear(void);
     const char* getFilename(void);
     
   private:
-    File content;
     const char* filename;
 };
 
