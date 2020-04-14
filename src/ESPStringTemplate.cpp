@@ -66,15 +66,14 @@ const char* TokenStringPair::getString(void)
 
 ESPStringTemplate::ESPStringTemplate(const char* fileName)
 {
-  this->espFlash = new ESPFlash<char>(fileName);
-  this->espFlash->clear();
+  this->espFlash.setFileName(fileName);
+  this->espFlash.clear();
   return;
 }
 
 ESPStringTemplate::~ESPStringTemplate()
 {
-  this->espFlash->clear();
-  delete this->espFlash;
+  this->espFlash.clear();
   return;
 }
   
@@ -85,7 +84,7 @@ bool ESPStringTemplate::add_P(PGM_P stringToAdd)
   
   success = false;
   bytesToWrite = strlen_P(stringToAdd);
-  success = this->espFlash->appendElements_P(stringToAdd, bytesToWrite);
+  success = this->espFlash.appendElements_P(stringToAdd, bytesToWrite);
 
   return success;
 }
@@ -98,7 +97,7 @@ bool ESPStringTemplate::add(const char* stringToAdd)
   
   success = false;
   bytesToWrite = strlen(stringToAdd);
-  success = this->espFlash->appendElements(stringToAdd, bytesToWrite);
+  success = this->espFlash.appendElements(stringToAdd, bytesToWrite);
 
   return success;
 }
@@ -114,7 +113,7 @@ bool ESPStringTemplate::add_P(PGM_P stringToAdd, const char* token, const char* 
   strcpy_P(buffer, stringToAdd);
   String bufferString(buffer);
   bufferString.replace(token, string);
-  success = this->espFlash->appendElements(bufferString.c_str(), bufferString.length());
+  success = this->espFlash.appendElements(bufferString.c_str(), bufferString.length());
   
   return success;
 }
@@ -127,7 +126,7 @@ bool ESPStringTemplate::add(const char* stringToAdd, const char* token, const ch
   success = false;
   String bufferString(stringToAdd);
   bufferString.replace(token, string);
-  success = this->espFlash->appendElements(bufferString.c_str(), bufferString.length());
+  success = this->espFlash.appendElements(bufferString.c_str(), bufferString.length());
   
   return success;
 }
@@ -147,7 +146,7 @@ bool ESPStringTemplate::add_P(PGM_P stringToAdd, TokenStringPair pairList[], siz
   {
     bufferString.replace(pairList[ii].getToken(), pairList[ii].getString());
   }
-  success = this->espFlash->appendElements(bufferString.c_str(), bufferString.length());
+  success = this->espFlash.appendElements(bufferString.c_str(), bufferString.length());
   
   return success;
 }
@@ -162,19 +161,24 @@ bool ESPStringTemplate::add(const char* stringToAdd, TokenStringPair pairList[],
   {
     bufferString.replace(pairList[ii].getToken(), pairList[ii].getString());
   }
-  success = this->espFlash->appendElements(bufferString.c_str(), bufferString.length());
+  success = this->espFlash.appendElements(bufferString.c_str(), bufferString.length());
   
   return success;
 }
 
 void ESPStringTemplate::clear(void)
 {
-  this->espFlash->clear();
+  this->espFlash.clear();
   return;
+}
+
+size_t ESPStringTemplate::size(void)
+{
+  return this->espFlash.length() * sizeof(char);
 }
 
 const char* ESPStringTemplate::getFileName(void)
 {
-  return this->espFlash->getFileName();
+  return this->espFlash.getFileName();
 }
   
