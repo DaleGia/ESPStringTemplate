@@ -25,6 +25,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #define ESPSTRINGTEMPLATE_H_
 
 #include <pgmspace.h>
+#include "ESPFlash.h"
+
 /* 
   The TokenStringPair class can be used with the StringTemplate class
   to provide a simple way to replace "tokens" within a string with other
@@ -54,8 +56,8 @@ class TokenStringPair
 class ESPStringTemplate
 {
   public:
-    ESPStringTemplate(const char* filename);
-  
+    ESPStringTemplate(const char* fileName);
+    ~ESPStringTemplate();
     bool add_P(PGM_P  stringToAdd);
     bool add(const char* stringToAdd);
     bool add(const char* stringToAdd, const char* token, const char* string);
@@ -64,11 +66,11 @@ class ESPStringTemplate
     bool add(const char* stringToAdd, TokenStringPair pairList[], size_t numberOfPairs);
     bool add_P(PGM_P stringToAdd, TokenStringPair pairList[], size_t numberOfPairs);
 
-    void clear(void);
-    const char* getFilename(void);
-    
+    const char* getFileName(void);
+    void clear(void);    
+    size_t size(void);    
   private:
-    const char* filename;
+    ESPFlash<char> espFlash;
 };
 
 #endif /*ESPSTRINGTEMPLATE_H_*/
