@@ -166,6 +166,11 @@ bool ESPStringTemplate::add(const char* stringToAdd, TokenStringPair pairList[],
   return success;
 }
 
+void ESPStringTemplate::copyTemplate(char* buffer)
+{
+  this->espFlash.getFrontElements(buffer, size());
+}
+
 void ESPStringTemplate::clear(void)
 {
   this->espFlash.clear();
@@ -174,7 +179,7 @@ void ESPStringTemplate::clear(void)
 
 size_t ESPStringTemplate::size(void)
 {
-  return this->espFlash.length() * sizeof(char);
+  return this->espFlash.length();
 }
 
 const char* ESPStringTemplate::getFileName(void)
