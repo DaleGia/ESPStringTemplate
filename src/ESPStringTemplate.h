@@ -66,6 +66,8 @@ class ESPStringTemplate
     bool add(const char* stringToAdd, TokenStringPair pairList[], size_t numberOfPairs);
     bool add_P(PGM_P stringToAdd, TokenStringPair pairList[], size_t numberOfPairs);
 
+    void copyTemplate(char* buffer);
+
     const char* getFileName(void);
     void clear(void);    
     size_t size(void);    
