@@ -68,9 +68,9 @@ class ESPStringTemplate
 
     const char* getFileName(void);
     void clear(void);    
-    
+    size_t size(void);    
   private:
-    ESPFlash<char> *espFlash;
+    ESPFlash<char> espFlash;
 };
 
 #endif /*ESPSTRINGTEMPLATE_H_*/
