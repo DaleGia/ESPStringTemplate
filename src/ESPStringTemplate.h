@@ -19,7 +19,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #ifndef ESPSTRINGTEMPLATE_H_
 #define ESPSTRINGTEMPLATE_H_
 
-#include <WString.h>
+#include <Arduino.h>
+#include <pgmspace.h>
 
 /* 
   The TokenStringPair class can be used with the StringTemplate class
