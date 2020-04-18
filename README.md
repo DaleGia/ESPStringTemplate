@@ -11,7 +11,7 @@ ESPStringTemplate is a lightweight library that was created to make static web p
 ## Installation
 Download this file as a zip, and extract the resulting folder into your Arduino Libraries folder. See [Installing Additional Arduino Libraries](https://www.arduino.cc/en/Guide/Libraries). Alternatively, use the Arduino IDE and library manager to find and install ESPStringTemplate.
 
-## Example
+## Examples
 - Simple example - Using string literals stored in RAM to build a web page that is stored in flash.
 ```c++
 SPIFFS.begin();
