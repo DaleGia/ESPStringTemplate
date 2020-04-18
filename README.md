@@ -1,7 +1,7 @@
 # ESPStringTemplate
 Lightweight string templating library for building static web pages on the ESP8266
 
-ESPStringTemplate is a lightweight library created to make static web page generation simple and easy to understand on the ESP8266. It was created in an attempt to make building customisable and scalable web pages fast and easy while using flash memory to store the created web pages. 
+ESPStringTemplate is a lightweight library that was created to make static web page generation simple and easy to understand on the ESP8266. It was created in an attempt to make building customisable and scalable web pages fast and easy while using flash memory to store the created web pages. 
 
 ## Features
 - Simple interface to add string/HTML elements to files stored in flash memory using SPIFFS.
