@@ -75,6 +75,8 @@ ESPStringTemplate::ESPStringTemplate(char* templateBuffer, uint32_t templateBuff
 
 bool ESPStringTemplate::add_P(PGM_P stringToAdd)
 {
+  Serial.println("add_P(PGM_P stringToAdd)");
+
   size_t stringToAddLength;
   if(!this->overflowFlag)
   {
@@ -86,6 +88,7 @@ bool ESPStringTemplate::add_P(PGM_P stringToAdd)
     }
     else
     {
+      Serial.println("add_P(PGM_P stringToAdd) handleOverflow");
       handleOverflow();
     }
   }
@@ -96,6 +99,8 @@ bool ESPStringTemplate::add_P(PGM_P stringToAdd)
 
 bool ESPStringTemplate::add(const char* stringToAdd)
 {
+  Serial.println("add(const char* stringToAdd)");
+
   size_t stringToAddLength;
   if(!this->overflowFlag)
   {
@@ -107,6 +112,7 @@ bool ESPStringTemplate::add(const char* stringToAdd)
     }
     else
     {
+      Serial.println("add(const char* stringToAdd) handleOverflow");
       handleOverflow();
     }
   }
@@ -116,6 +122,8 @@ bool ESPStringTemplate::add(const char* stringToAdd)
 
 bool ESPStringTemplate::add_P(PGM_P stringToAdd, const char* token, const char* string)
 {  
+  Serial.println("add_P(PGM_P stringToAdd, const char* token, const char* string)");
+
   char* destPointer;   
   size_t stringToAddLength;
   if(!this->overflowFlag)
@@ -129,6 +137,7 @@ bool ESPStringTemplate::add_P(PGM_P stringToAdd, const char* token, const char* 
     }
     else
     {
+      Serial.println("add_P(PGM_P stringToAdd, const char* token, const char* string) handleOverflow");
       handleOverflow();
     }
   }  
@@ -138,6 +147,8 @@ bool ESPStringTemplate::add_P(PGM_P stringToAdd, const char* token, const char* 
 
 bool ESPStringTemplate::add(const char* stringToAdd, const char* token, const char* string)
 {
+  Serial.println("add(const char* stringToAdd, const char* token, const char* string)");
+
   char* destPointer;   
   size_t stringToAddLength;
   if(!this->overflowFlag)
@@ -151,6 +162,7 @@ bool ESPStringTemplate::add(const char* stringToAdd, const char* token, const ch
     }
     else
     {
+      Serial.println("add(const char* stringToAdd, const char* token, const char* string) handleOverflow");
       handleOverflow();
     }
   }  
@@ -159,6 +171,8 @@ bool ESPStringTemplate::add(const char* stringToAdd, const char* token, const ch
 
 bool ESPStringTemplate::add_P(PGM_P stringToAdd, TokenStringPair pairList[], size_t numberOfPairs)
 {
+  Serial.println("add_P(PGM_P stringToAdd, TokenStringPair pairList[], size_t numberOfPairs)");
+
   char* destPointer;
   size_t stringToAddLength;
   int ii;   
@@ -184,6 +198,7 @@ bool ESPStringTemplate::add_P(PGM_P stringToAdd, TokenStringPair pairList[], siz
     }
     else
     {
+      Serial.println("add_P(PGM_P stringToAdd, TokenStringPair pairList[], size_t numberOfPairs) handleOverflow()");
       handleOverflow();
     }
   }     
@@ -193,6 +208,8 @@ bool ESPStringTemplate::add_P(PGM_P stringToAdd, TokenStringPair pairList[], siz
 
 bool ESPStringTemplate::add(const char* stringToAdd, TokenStringPair pairList[], size_t numberOfPairs)
 {
+  Serial.println("add(const char* stringToAdd, TokenStringPair pairList[], size_t numberOfPairs)");
+
   char* destPointer;
   size_t stringToAddLength;
   int ii;   
@@ -219,6 +236,7 @@ bool ESPStringTemplate::add(const char* stringToAdd, TokenStringPair pairList[],
     }
     else
     {
+      Serial.println("add(const char* stringToAdd, TokenStringPair pairList[], size_t numberOfPairs) handleOverflow");
       handleOverflow();
     }
   }     
@@ -247,12 +265,14 @@ size_t ESPStringTemplate::bufferLeft(void)
 {
   size_t bufferLeft;
   bufferLeft = this->bufferLength - this->bufferIndex;
+  Serial.printf("Buffer left: %d\n", bufferLeft);
+
   return bufferLeft;
 }
 
 void ESPStringTemplate::handleOverflow(void)
 {
-  memset(this->buffer, 0, this->bufferLength);
+  clear();  
   add_P(overflowString);
   this->overflowFlag = true;
   return;
@@ -260,6 +280,8 @@ void ESPStringTemplate::handleOverflow(void)
 
 bool ESPStringTemplate::replace(char* stringToEdit, const char* oldSubstring, const char* newSubstring)
 {
+  Serial.println("replace");
+
   size_t oldSize;
   size_t newSize;
   size_t newBufferLeft;
@@ -277,7 +299,10 @@ bool ESPStringTemplate::replace(char* stringToEdit, const char* oldSubstring, co
     while(NULL != foundPointer)
     {
       newBufferLeft = bufferLeft()-(newSize-oldSize);
-      if((0 < newBufferLeft) && (this->bufferIndex < newBufferLeft))
+      Serial.printf("newBufferLeft: %d\n", newBufferLeft);
+      Serial.printf("this->bufferIndex: %d\n", this->bufferIndex);
+
+      if(0 < newBufferLeft)
       {
         moveSize = 
           (this->bufferEndPointer-foundPointer) - newSize;
@@ -295,6 +320,7 @@ bool ESPStringTemplate::replace(char* stringToEdit, const char* oldSubstring, co
       }
       else
       {
+        Serial.println("replace overflow");
         handleOverflow();
         break;
       }
