@@ -10,7 +10,8 @@ ESPStringTemplate	KEYWORD1
 add	        KEYWORD2
 add_P	      KEYWORD2
 clear	      KEYWORD2
-getFilename	KEYWORD2
+get         KEYWORD2
+isOverflow  KEYWORD2
 setPair	    KEYWORD2
 setToken	  KEYWORD2
 setString	  KEYWORD2
