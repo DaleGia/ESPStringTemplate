@@ -3,9 +3,12 @@ ESPStringTemplate example
 
 Copyright (c) 2020 Dale Giancono. All rights reserved..
 This file is a sample application of the ESPStringTemplate class
-that uses HTML string elements stored in ram and flash to build a web page
-that is stored and accessed in flash using SPIFFS. 
-The example serves text based webpage. 
+that uses HTML string elements stored flash to build web page stored
+and accessed using SPIFFS. The example serves a webpage with a title, 
+a line edit, and a submit button. The title of the page can be 
+changed by submiting a string with the line edit. Each time the 
+submit button is pressed the webpage is statically created using 
+the submited line edit string as the title.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -28,35 +31,30 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 /* Create webserver instance for serving the StringTemplate example. */
 AsyncWebServer server(80);
-
+char buffer[1000];
 void setup() 
 {
-  /* Start SPIFFS so it can be used by ESPStringTemplate */
-  SPIFFS.begin();
   /* Configure access point with static IP address */
   WiFi.softAPConfig(
     IPAddress(192,168,4,1),
     IPAddress(192,168,4,1),
     IPAddress(255,255,255,0));
-  WiFi.softAP("ESPStringTemplate example");
-
+  WiFi.softAP("StringTemplate HTMLBuilder Test");
   /* Define the handler for when the server receives a GET request for the root uri. */
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
   {
-    /* The file name of what the template file will be called in the file system.*/
-    const char* templateFileName = "/stringTemplate/template.html";
     /* Create instance (and file_ of the ESPStringTemplate */
-    ESPStringTemplate testTemplate(templateFileName);
+    ESPStringTemplate testTemplate(buffer, sizeof(buffer));
 
     /* Add page header string to the template. */
     testTemplate.add("Hi!<br><br>");
     testTemplate.add("Here is a super simple example of how to use the ESPStringTemplate library...<br><br>");
-    testTemplate.add("This string is stored in RAM, and is appended to a file stored in flash using SPIFFS.<br><br>");
-    testTemplate.add_P(PSTR("This string is stored in flash using PROGMEM, and is appended to the same file stored in flash using SPIFFS.<br><br>"));
+    testTemplate.add("This string is stored in RAM, and is added to a statically allocated buffer.<br><br>");
+    testTemplate.add_P(PSTR("This string is stored in flash using PROGMEM, and is added to the same statically allocated buffer.<br><br>"));
     testTemplate.add(
-      "This string has basic templating performed on it. The filename of the web page stored in the file system is %FILENAME%.<br><br>",
-      "%FILENAME%",
-      templateFileName);
+      "This string has basic templating performed on it. The size of the statically allocated buffer is %BUFFERSIZE%.<br><br>",
+      "%BUFFERSIZE%",
+      String(sizeof(buffer)).c_str());
 
     TokenStringPair pairs[2];
     pairs[0].setPair("%TOKEN1%", "STRING1");
@@ -67,7 +65,7 @@ void setup()
       2);
 
     /* Send the webpage from SPIFFS where it is stored. */
-    request->send(SPIFFS, testTemplate.getFilename(), "text/html");
+    request->send(200, "text/html", buffer);
   });
 
   /* Begin the web server */
