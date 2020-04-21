@@ -8,6 +8,10 @@ ESPStringTemplate is a lightweight library that was created to make static web p
 - Abiility to replace multiple string tokens in HTML elements that are added to buffer.
 - Ability to utilise flash memory for string/HTML elements used to build web pages.
 
+## Why Would I Want This?
+- Fast and efficient string templating.
+- Easier to use than many other templating options on the ESP8266.
+
 ## Installation
 Download this file as a zip, and extract the resulting folder into your Arduino Libraries folder. See [Installing Additional Arduino Libraries](https://www.arduino.cc/en/Guide/Libraries). Alternatively, use the Arduino IDE and library manager to find and install ESPStringTemplate.
 
