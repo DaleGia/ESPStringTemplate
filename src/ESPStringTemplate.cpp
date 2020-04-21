@@ -5,7 +5,6 @@ This file defines the ESPStringTemplate class. It can be used
 to build the conent of statically allocated strings and have "tokens" 
 within those strings replaced with substrings. It is particularly 
 useful as a static web page generator.
-
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
@@ -164,7 +163,7 @@ bool ESPStringTemplate::add_P(PGM_P stringToAdd, TokenStringPair pairList[], siz
   int ii;   
   if(!this->overflowFlag)
   {
-    stringToAddLength = strlen(stringToAdd);
+    stringToAddLength = strlen_P(stringToAdd);
     if(stringToAddLength < bufferLeft())
     {
       destPointer = 
