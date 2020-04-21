@@ -8,6 +8,7 @@ a line edit, and a submit button. The title of the page can be
 changed by submiting a string with the line edit. Each time the 
 submit button is pressed the webpage is statically created using 
 the submited line edit string as the title.
+
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
@@ -42,13 +43,10 @@ static const char _PAGEFOOTER[] PROGMEM = "</body></html>";
 
 /* Create webserver instance for serving the StringTemplate example. */
 AsyncWebServer server(80);
-/* Create the filename which the page template will be saved under in spiffs */
-static const char htmlTemplateFileName[] = "/stringTemplate/template.html";
+char buffer[1000];
 
 void setup() 
 {
-  /* Start SPIFFS so it can be used by ESPStringTemplate */
-  SPIFFS.begin();
   /* Configure access point with static IP address */
   WiFi.softAPConfig(
     IPAddress(192,168,4,1),
@@ -60,7 +58,7 @@ void setup()
   {
     /* Create instance of StringTemplate, TokenStringPair, and a TokenStringPair array
     that will be used to build the site.*/
-    ESPStringTemplate testTemplate("ESPStringTemplate.html");
+    ESPStringTemplate testTemplate(buffer, sizeof(buffer));
     TokenStringPair pair;
     TokenStringPair pairArray[2];
 
@@ -102,7 +100,7 @@ void setup()
     /* Add the _PAGEFOOTER string to the StringTemplate */
     testTemplate.add_P(_PAGEFOOTER);   
     /* Send the webpage from SPIFFS where it is stored. */
-    request->send(SPIFFS, testTemplate.getFilename(), "text/html");
+    request->send(200, "text/html", buffer);
   });
 
   /* Begin the web server */
