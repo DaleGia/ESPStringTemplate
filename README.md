@@ -18,7 +18,7 @@ Download this file as a zip, and extract the resulting folder into your Arduino 
 ## Examples
 - Simple example - Using string literals to build a page in a statically allocated buffer.
 ```c++
-static char[50] buffer;
+static char buffer[200];
 ESPStringTemplate webpage(buffer, sizeof(buffer));
 webpage.add("Hi!<br><br>");
 webpage.add("This is an example of the ESPStringTemplate Library.<br><br>");
@@ -26,7 +26,7 @@ webpage.add("These strings are stored in RAM, and are added to the provided stat
 ```
 - Using string literals stored in flash (program memory) to build a web page.
 ```c++
-static char[50] buffer;
+static char buffer[200];
 ESPStringTemplate webpage(buffer, sizeof(buffer));
 webpage.add_P(PSTR("This is an example of the ESPStringTemplate Library.<br><br>");
 webpage.add_P(PSTR("This string is stored in flash using PROGMEM, and are added to the provided statically allocated buffer."));
@@ -37,7 +37,7 @@ static const char _PAGEHEADER[] PROGMEM = "<html><body>";
 static const char _CONTENT[]    PROGMEM = "%CONTENT%";
 static const char _PAGEFOOTER[] PROGMEM = "</body></html>";
 
-static char[50] buffer;
+static char buffer[200];
 ESPStringTemplate webpage(buffer, sizeof(buffer));
 webpage.add_P(_PAGEHEADER);
 webpage.add_P(_CONTENT, "%CONTENT%", "TEST CONTENT");
@@ -49,7 +49,7 @@ static const char _PAGEHEADER[] PROGMEM = "<html><body>";
 static const char _CONTENT[]   PROGMEM = "%CONTENTA% and %CONTENTB% and %CONTENTC%";
 static const char _PAGEFOOTER[] PROGMEM = "</body></html>";
 
-static char[50] buffer;
+static char buffer[200];
 ESPStringTemplate webpage(buffer, sizeof(buffer));
 TokenStringPair pair[3];
 webpage.add_P(_PAGEHEADER);
@@ -61,7 +61,7 @@ webpage.add_P(_PAGEFOOTER);
 ```
 - Using ESPAsyncWebServer to serve created webpage
 ```c++
-static char[50] buffer;
+static char buffer[200];
 WiFi.softAP("ESPStringTemplate Example");
 
 AsyncWebServer server(80);
